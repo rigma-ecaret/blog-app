@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // Added role attribute
+        
     ];
 
     /**
@@ -45,4 +47,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function posts()
+{
+    return $this->hasMany(Post::class);
+}
+
+
+
+
 }
