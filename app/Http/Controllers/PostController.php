@@ -47,7 +47,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('posts.show', compact('post'));
+        $comments = $post->comments()->with('user')->latest()->paginate(10);
+        $post->load('user'); // Eager load the user for the post
+        return view('posts.show', compact('post','comments'));
     }
 
     /**
@@ -70,7 +72,7 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+        return redirect()->route('posts.myPosts')->with('success', 'Post updated successfully.');
     }
 
     /**
@@ -80,6 +82,11 @@ class PostController extends Controller
     {
         $post->delete();
 
-        return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+        return redirect()->route('posts.myPosts')->with('success', 'Post deleted successfully.');
+    }
+    public function myPosts()
+    {
+        $posts = Post::where('user_id', Auth::id())->latest()->paginate(10);
+        return view('posts.my_posts', compact('posts'));
     }
 }
