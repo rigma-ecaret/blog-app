@@ -27,7 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
+// routes/web.php
+//Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
 Route::resource('comments', CommentController::class)->middleware(['auth', 'verified']);
 

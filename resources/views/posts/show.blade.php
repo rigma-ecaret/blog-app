@@ -27,8 +27,9 @@
 
     <hr>
     <h5>Add a Comment</h5>
-    <form action="{{ route('comments.store', $post->id)}}" method="POST">
+    <form action="{{ route('comments.store')}}" method="POST">
         @csrf
+        <input type="hidden" name="post_id" value="{{ $post->id }}">
         <div class="mb-3">
             <textarea name="content" class="form-control" rows="3" placeholder="Write your comment..." required></textarea>
         </div>
