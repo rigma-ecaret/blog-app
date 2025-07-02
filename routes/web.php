@@ -10,6 +10,7 @@ Route::get('/', function () {
 });
 
 Route::get('/posts/my-posts', [PostController::class, 'myPosts'])->middleware(['auth', 'verified'])->name('posts.myPosts');
+Route::get('/comments/my-comments', [CommentController::class, 'myComments'])->middleware(['auth', 'verified'])->name('comments.myComments');
 
 Route::get('/dashboard', function () {
     $user = Auth::user();

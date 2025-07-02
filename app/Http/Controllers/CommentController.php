@@ -6,14 +6,26 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\CommentRepositoryInterface;
+
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    protected $commentRepository;
+
+    public function __construct(CommentRepositoryInterface $commentRepository){
+
+        $this->commentRepository = $commentRepository;
+    }
+
+
+
+     public function index()
     {
-        //
+        $comments = $this->commentRepository->all();
+        return view('comments.index', compact('comments'));
     }
 
     /**
@@ -21,7 +33,7 @@ class CommentController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -38,7 +50,8 @@ class CommentController extends Controller
 
     $validated['user_id'] = Auth::id();
 
-     Comment::create($validated);
+    // Comment::create($validated);
+    $this->commentRepository->create($validated);
 
   return redirect()->route('posts.show', $validated['post_id'])->with('success', 'Comment added successfully.');
 
@@ -47,32 +60,52 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function show($id)
     {
-        //
+        $comment = $this->commentRepository->find($id);
+        if (!$comment) {
+            return redirect()->back()->with('error', 'Comment not found.');
+        }
+        return view('comments.show', compact('comment'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Comment $comment)
+    public function edit($id)
     {
-        //
+        $comment = $this->commentRepository->find($id);
+        return view('comments.edit', compact('comment'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request,$id)
     {
-        //
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $this->commentRepository->update($id, $validated);
+
+        return redirect()->back()->with('success', 'Comment updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy($id)
     {
-        //
+        $this->commentRepository->delete($id);
+        return redirect()->back()->with('success', 'Comment deleted successfully.');
     }
+
+    public function myComments()
+    {
+
+        $comments= $this->commentRepository->getPostsByUserId(Auth::id());
+        return view('comments.my_comments', compact('comments'));
+    }
+
 }

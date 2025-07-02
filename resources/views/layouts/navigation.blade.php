@@ -18,10 +18,14 @@
                      <x-nav-link :href="route('posts.create')" :active="request()->routeIs('dashboard')">
                         {{ __('Create Post') }}
                     </x-nav-link>
-<x-nav-link :href="route('posts.myPosts')" :active="request()->routeIs('posts.myPosts')">
-    {{ __('My Posts') }}
-</x-nav-link>
-                     {{-- <x-nav-link :href='#' :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('posts.myPosts')" :active="request()->routeIs('posts.myPosts')">
+                        {{ __('My Posts') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('comments.myComments')" :active="request()->routeIs('comments.myComments')">
+                        {{ __('My Comments') }}
+                    </x-nav-link>
+
+                                        {{-- <x-nav-link :href='#' :active="request()->routeIs('dashboard')">
                         {{ __('My Posts') }}
                     </x-nav-link> --}}
                 </div>
