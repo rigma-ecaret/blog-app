@@ -89,7 +89,7 @@ class CommentController extends Controller
 
         $this->commentRepository->update($id, $validated);
 
-        return redirect()->back()->with('success', 'Comment updated successfully.');
+        return redirect()->route('comments.myComments')->with('success', 'Comment updated successfully.');
     }
 
     /**
