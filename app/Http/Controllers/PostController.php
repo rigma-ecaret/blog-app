@@ -5,15 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Repositories\PostRepositoryInterface;
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    protected $postRepository;
+
+    public function __construct(PostRepositoryInterface $postRepository)
+    {
+        $this->postRepository = $postRepository;
+    }
+
+
     public function index()
     {
-        $posts = Post::with('user')->latest()->paginate(10);
+
+        $posts= $this->postRepository->all();
         return view('posts.index', compact('posts'));
     }
 
@@ -37,7 +46,8 @@ class PostController extends Controller
 
         $validated['user_id'] = Auth::id();
 
-        Post::create($validated);
+        //Post::create($validated);
+        $this->postRepository->create($validated);
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
@@ -45,32 +55,35 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show($id)
     {
+
+        $post = $this->postRepository->find($id);
         $comments = $post->comments()->with('user')->latest()->paginate(10);
-        $post->load('user'); // Eager load the user for the post
+        $post->load('user');
         return view('posts.show', compact('post','comments'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
+        $post = $this->postRepository->find($id);
         return view('posts.edit', compact('post'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
         ]);
 
-        $post->update($validated);
+        $this->postRepository->update($id, $validated);
 
         return redirect()->route('posts.myPosts')->with('success', 'Post updated successfully.');
     }
@@ -78,15 +91,17 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        $post->delete();
+
+        $this->postRepository->delete($id);
 
         return redirect()->route('posts.myPosts')->with('success', 'Post deleted successfully.');
     }
     public function myPosts()
     {
-        $posts = Post::where('user_id', Auth::id())->latest()->paginate(10);
+
+        $posts = $this->postRepository->getPostsByUserId(Auth::id());
         return view('posts.my_posts', compact('posts'));
     }
 }
