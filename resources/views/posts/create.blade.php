@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="form-section">
-                    <form action="{{ route('posts.store') }}" method="POST">
+                    <form action="{{ route('posts.store') }}"  id="postForm" method="POST">
                         @csrf
 
                         {{-- Title --}}
@@ -104,3 +104,42 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+$(document).ready(function () {
+    $('#postForm').validate({
+        rules: {
+            title: {
+                required: true,
+                minlength: 5
+            },
+            content: {
+                required: true,
+                minlength: 20
+            }
+        },
+        messages: {
+            title: {
+                required: "Please enter a post title",
+                minlength: "Title must be at least 5 characters"
+            },
+            content: {
+                required: "Please enter some content",
+                minlength: "Content must be at least 20 characters"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('text-danger text-sm');
+            error.insertAfter(element);
+        },
+        highlight: function (element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+});
+</script>
+@endpush

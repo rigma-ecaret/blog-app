@@ -35,7 +35,7 @@
     <!-- Add Comment Form -->
     <div class="mb-4">
         <h4 class="mb-3">Add a Comment</h4>
-        <form action="{{ route('comments.store') }}" method="POST" class="border p-4 rounded bg-white shadow-sm">
+        <form action="{{ route('comments.store') }}" method="POST" class="border p-4 rounded bg-white shadow-sm" id="commentForm" >
             @csrf
             <input type="hidden" name="post_id" value="{{ $post->id }}">
             <div class="mb-3">
@@ -51,8 +51,39 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            <button type="submit" class="btn btn-primary">Post Comment</button>
+            <button type="submit" class="btn btn-secondary">Post Comment</button>
         </form>
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+$(document).ready(function () {
+    $('#commentForm').validate({
+        rules: {
+            content: {
+                required: true,
+                minlength: 5
+            }
+        },
+        messages: {
+            content: {
+                required: "Please enter a comment.",
+                minlength: "Your comment must be at least 5 characters long."
+            }
+        },
+        errorElement: 'span',
+        errorClass: 'text-danger small',
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        },
+        highlight: function (element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+});
+</script>
+@endpush

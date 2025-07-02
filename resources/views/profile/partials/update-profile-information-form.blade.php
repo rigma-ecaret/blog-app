@@ -62,3 +62,38 @@
         </div>
     </form>
 </section>
+
+<script>
+    $(document).ready(function () {
+        $('#profile-form').validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2
+                },
+                email: {
+                    required: true,
+                    email: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Please enter your name",
+                    minlength: "Your name must be at least 2 characters long"
+                },
+                email: {
+                    required: "Please enter your email address",
+                    email: "Please enter a valid email address"
+                }
+            },
+            errorClass: "text-sm text-red-600 mt-1",
+            errorElement: "div",
+            highlight: function (element) {
+                $(element).addClass('border-red-500');
+            },
+            unhighlight: function (element) {
+                $(element).removeClass('border-red-500');
+            }
+        });
+    });
+</script>
