@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\CommentRepositoryInterface;
+use App\Jobs\CommentJob;
+
 
 class CommentController extends Controller
 {
@@ -51,7 +53,8 @@ class CommentController extends Controller
     $validated['user_id'] = Auth::id();
 
     // Comment::create($validated);
-    $this->commentRepository->create($validated);
+    $comment=$this->commentRepository->create($validated);
+    CommentJob::dispatch($comment);
 
   return redirect()->route('posts.show', $validated['post_id'])->with('success', 'Comment added successfully.');
 
